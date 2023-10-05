@@ -47,7 +47,7 @@ export default function CartContextProvider({ children }) {
   function checkout(id, shippingAddress) {
     return axios
       .post(
-        `${BaseUrl}/api/v1/orders/checkout-session/${id}?url=https://e-commerceapp.vercel.app/`,
+        `${BaseUrl}/api/v1/orders/checkout-session/${id}?url=https://e-commerceapp.vercel.app`,
         { shippingAddress },
         { headers }
       )

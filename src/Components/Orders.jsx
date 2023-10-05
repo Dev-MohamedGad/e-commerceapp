@@ -5,7 +5,9 @@ import Loading from "./Loading";
 export default function Orders() {
   let { data, isLoading } = useApi(
     "orders",
-    `orders/user/${localStorage.getItem("idonwer")}`
+    `orders/user/${
+      localStorage.getItem("idonwer") ? localStorage.getItem("idonwer") : ""
+    }`
   );
   if (isLoading) return <Loading />;
   console.log(data.data);
