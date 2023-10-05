@@ -33,7 +33,7 @@ const ResetPasswordForm = () => {
         console.log(result.token);
         toast.success("seucss");
         localStorage.setItem("userToken", result.token);
-        navigate("login");
+        navigate("/login");
 
         setIsLogin(result.token);
 
