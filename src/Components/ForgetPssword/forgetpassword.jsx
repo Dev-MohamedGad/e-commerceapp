@@ -62,7 +62,7 @@ const ForgotPasswordForm = () => {
       await postEmail(values.email);
     } else {
       await postreset(values.code);
-      navigate("resetpassword");
+      navigate("/resetpassword");
     }
   };
 
