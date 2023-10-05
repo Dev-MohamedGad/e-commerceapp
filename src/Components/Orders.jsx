@@ -10,7 +10,6 @@ export default function Orders() {
     }`
   );
   if (isLoading) return <Loading />;
-  console.log(data.data);
   return (
     <>
       <div className="container">
