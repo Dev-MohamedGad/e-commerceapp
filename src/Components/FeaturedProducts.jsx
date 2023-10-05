@@ -12,7 +12,7 @@ export default function FeaturedProducts() {
   let { isLogin } = useContext(UserToken);
   let { addwishList, delwishlist } = useContext(WishlistContext);
   let [wishlist, setwishlist] = useState(
-    localStorage.getItem("wish").split(",")
+    localStorage.getItem("wish")
       ? localStorage.getItem("wish").split(",")
       : []
   );
