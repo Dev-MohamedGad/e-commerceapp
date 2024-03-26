@@ -7,6 +7,7 @@ import Loading from "./Loading";
 import useApi from "../hooks/useApi";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { WishlistContext } from "../Context/WishListContext";
+
 export default function FeaturedProducts() {
   let { addCart, setCartNums, setCartId } = useContext(CartContext);
   let { isLogin } = useContext(UserToken);
@@ -17,7 +18,8 @@ export default function FeaturedProducts() {
       : []
   );
   let { data, isLoading } = useApi("products", "products");
-  const [isLoadingwishlist, setisLoadingwishlist] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0); // Current page
+  const perPage = 12; // Number of items per page
 
   async function addCartFun(id) {
     let res = await addCart(id);
@@ -35,23 +37,33 @@ export default function FeaturedProducts() {
   }
 
   if (isLoading) return <Loading />;
-  if (isLoadingwishlist == false) return <Loading />;
+
+  // Pagination logic
+  const startIndex = currentPage * perPage;
+  const endIndex = startIndex + perPage;
+  const paginatedData = data?.data.data.slice(startIndex, endIndex);
+
+  const totalPages = Math.ceil(data?.data.data.length / perPage);
+
+  const handleClick = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   return (
     <>
       <div className="container">
         <div className="row position-relative ">
-          {data?.data.data.map((product) => (
+          {paginatedData.map((product) => (
             <div className="col-lg-2 col-md-3 col-sm-6" key={product._id}>
               <div className="product p-3 cursor-pointer g-2 shadow-sm position-relative  overflow-hidden">
                 <button
                   className="btn-heart   fs-1   p-0  text-danger  position-absolute  end-0 top-0 "
                   onClick={async () => {
-                    if (wishlist.includes(product._id) != true && isLogin) {
-                      setisLoadingwishlist(false);
+                    if (
+                      wishlist.includes(product._id) != true &&
+                      isLogin
+                    ) {
                       addwishList(product._id, isLogin).then((result) => {
-                        setisLoadingwishlist(true);
-
                         setwishlist(result.data.data);
 
                         toast.success(result.data.message, {
@@ -59,12 +71,11 @@ export default function FeaturedProducts() {
                           position: "top-center",
                         });
                       });
-                    } else if (wishlist.includes(product._id) && isLogin) {
-                      setisLoadingwishlist(false);
-
+                    } else if (
+                      wishlist.includes(product._id) &&
+                      isLogin
+                    ) {
                       delwishlist(product._id, isLogin).then((result) => {
-                        setisLoadingwishlist(true);
-
                         setwishlist(result.data.data);
                         toast.error(result.data.message, {
                           duration: 2000,
@@ -110,6 +121,44 @@ export default function FeaturedProducts() {
             </div>
           ))}
         </div>
+        {/* Pagination */}
+        <nav aria-label="Pagination" className="d-flex justify-content-center mt-5" >
+          <ul className="pagination">
+            <li className={`page-item ${currentPage === 0 ? "disabled" : ""}`}>
+              <button
+                className="page-link"
+                onClick={() => handleClick(currentPage - 1)}
+              >
+                Previous
+              </button>
+            </li>
+            {Array.from({ length: totalPages }).map((_, index) => (
+              <li
+                key={index}
+                className={`page-item ${index === currentPage ? "active" : ""}`}
+              >
+                <button
+                  className="page-link"
+                  onClick={() => handleClick(index)}
+                >
+                  {index + 1}
+                </button>
+              </li>
+            ))}
+            <li
+              className={`page-item ${
+                currentPage === totalPages - 1 ? "disabled" : ""
+              }`}
+            >
+              <button
+                className="page-link"
+                onClick={() => handleClick(currentPage + 1)}
+              >
+                Next
+              </button>
+            </li>
+          </ul>
+        </nav>
       </div>
     </>
   );
